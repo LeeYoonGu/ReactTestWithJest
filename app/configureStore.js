@@ -1,5 +1,5 @@
 /**
- * Create the store with dynamic reducers
+ * Store 생성(미들웨어 설정)
  */
 
 import { createStore, applyMiddleware, compose } from 'redux';
@@ -8,53 +8,66 @@ import { routerMiddleware } from 'react-router-redux';
 import createSagaMiddleware from 'redux-saga';
 import createReducer from './reducers';
 
+/**
+ * redux-saga 미들웨어 생성
+ */
 const sagaMiddleware = createSagaMiddleware();
 
+/**
+ * 스토어 생성
+ */
 export default function configureStore(initialState = {}, history) {
-  // Create the store with two middlewares
-  // 1. sagaMiddleware: Makes redux-sagas work
-  // 2. routerMiddleware: Syncs the location/URL path to the state
-  const middlewares = [
-    sagaMiddleware,
-    routerMiddleware(history),
-  ];
 
-  const enhancers = [
-    applyMiddleware(...middlewares),
-  ];
+    /**
+     * 두개의 미들웨어를 생성한다.
+     * 1. sagaMiddleware : redux-sagas
+     * 2. routerMiddleware : url 경로를 state 로 만든다.
+     */
+    const middlewares = [
+        sagaMiddleware,
+        routerMiddleware(history),
+    ];
 
-  // If Redux DevTools Extension is installed use it, otherwise use Redux compose
-  /* eslint-disable no-underscore-dangle */
-  const composeEnhancers =
-    process.env.NODE_ENV !== 'production' &&
-    typeof window === 'object' &&
-    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
-      ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
-        // TODO Try to remove when `react-router-redux` is out of beta, LOCATION_CHANGE should not be fired more than once after hot reloading
-        // Prevent recomputing reducers for `replaceReducer`
-        shouldHotReload: false,
-      })
-      : compose;
-  /* eslint-enable */
+    const enhancers = [
+        applyMiddleware(...middlewares),
+    ];
 
-  const store = createStore(
-    createReducer(),
-    fromJS(initialState),
-    composeEnhancers(...enhancers)
-  );
+    /**
+     * Redux DevTools Extension 이 인스톨 되어있으면 그것으 사용 하고 아니면 Redux compose 사용
+     */
+    const composeEnhancers =
+        process.env.NODE_ENV !== 'production' &&
+        typeof window === 'object' &&
+        window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
+            ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
+                shouldHotReload: false,
+            })
+            : compose;
 
-  // Extensions
-  store.runSaga = sagaMiddleware.run;
-  store.injectedReducers = {}; // Reducer registry
-  store.injectedSagas = {}; // Saga registry
+    /**
+     * Store 생성
+     */
+    const store = createStore(
+        // 리듀서
+        createReducer(),
+        // initialState
+        fromJS(initialState),
+        // compose
+        composeEnhancers(...enhancers)
+    );
 
-  // Make reducers hot reloadable, see http://mxs.is/googmo
-  /* istanbul ignore next */
-  if (module.hot) {
-    module.hot.accept('./reducers', () => {
-      store.replaceReducer(createReducer(store.injectedReducers));
-    });
-  }
+    // 확장팩
+    store.runSaga = sagaMiddleware.run;
+    store.injectedReducers = {}; // Reducer registry
+    store.injectedSagas = {}; // Saga registry
 
-  return store;
+    // Make reducers hot reloadable, see http://mxs.is/googmo
+    /* istanbul ignore next */
+    if (module.hot) {
+        module.hot.accept('./reducers', () => {
+            store.replaceReducer(createReducer(store.injectedReducers));
+        });
+    }
+
+    return store;
 }

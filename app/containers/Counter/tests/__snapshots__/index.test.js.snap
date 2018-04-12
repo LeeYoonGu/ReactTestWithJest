@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Snapshot +++capturing Snapshot of Home 1`] = `
+<div>
+  <div
+    className="backButton"
+  >
+    <a
+      href="/"
+      onClick={[Function]}
+    >
+      <i
+        className="fa fa-arrow-left fa-3x"
+      />
+    </a>
+  </div>
+  <div
+    className="counter"
+  >
+    100
+  </div>
+  <div
+    className="btnGroup"
+  >
+    <button
+      className="btn"
+      onClick={undefined}
+    >
+      <i
+        className="fa fa-plus"
+      />
+    </button>
+    <button
+      className="btn"
+      onClick={undefined}
+    >
+      <i
+        className="fa fa-minus"
+      />
+    </button>
+  </div>
+</div>
+`;

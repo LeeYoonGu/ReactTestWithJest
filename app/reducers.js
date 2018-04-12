@@ -1,50 +1,39 @@
 /**
- * Combine all reducers in this file and export the combined reducers.
+ * reducers
+ * configureStore 에서 호출
  */
 
 import { fromJS } from 'immutable';
 import { combineReducers } from 'redux-immutable';
 import { LOCATION_CHANGE } from 'react-router-redux';
 
-import globalReducer from 'containers/App/reducer';
-import languageProviderReducer from 'containers/LanguageProvider/reducer';
 
-/*
- * routeReducer
- *
- * The reducer merges route location changes into our immutable state.
- * The change is necessitated by moving to react-router-redux@5
- *
+/**
+ * 초기 State 설정
  */
-
-// Initial routing state
 const routeInitialState = fromJS({
-  location: null,
+    location: null,
 });
 
 /**
  * Merge route into the global application state
  */
 function routeReducer(state = routeInitialState, action) {
-  switch (action.type) {
-    /* istanbul ignore next */
-    case LOCATION_CHANGE:
-      return state.merge({
-        location: action.payload,
-      });
-    default:
-      return state;
-  }
+    switch (action.type) {
+        case LOCATION_CHANGE:
+            // URL 이 변경액션에 대한 처리
+            return state.merge({location: action.payload});
+        default:
+            return state;
+    }
 }
 
 /**
- * Creates the main reducer with the dynamically injected ones
+ * Main Reducer 생성
  */
 export default function createReducer(injectedReducers) {
-  return combineReducers({
-    route: routeReducer,
-    global: globalReducer,
-    language: languageProviderReducer,
-    ...injectedReducers,
-  });
+    return combineReducers({
+        route: routeReducer,
+        ...injectedReducers,
+    });
 }

@@ -1,30 +1,37 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 import { Route } from 'react-router-dom';
+import Home from '../../../containers/Home/Loadable';
+import Counter from '../../../containers/Counter/Loadable';
 
-import Header from 'components/Header';
-import Footer from 'components/Footer';
 import App from '../index';
 
-describe('<App />', () => {
-  it('should render the header', () => {
-    const renderedComponent = shallow(
-      <App />
-    );
-    expect(renderedComponent.find(Header).length).toBe(1);
-  });
+describe('<App /> Test',()=>{
+    let wrapper;
 
-  it('should render some routes', () => {
-    const renderedComponent = shallow(
-      <App />
-    );
-    expect(renderedComponent.find(Route).length).not.toBe(0);
-  });
+    beforeEach(()=>{
+        wrapper = shallow(<App />)
 
-  it('should render the footer', () => {
-    const renderedComponent = shallow(
-      <App />
-    );
-    expect(renderedComponent.find(Footer).length).toBe(1);
-  });
+    })
+
+    // 기본 렌더 테스트
+    it('<App /> Render', () => {
+        expect(wrapper.length).toEqual(1)
+    });
+
+    // 라우터 테스트
+    it('<App /> has Router', () => {
+        expect(wrapper.find(Route).length).not.toBe(0);
+    });
+
+    // Home Router 테스트
+    it('<App /> has Home Router', () => {
+        expect(wrapper.find('Route[path="/"]').props().component).toEqual(Home);
+    });
+
+    // Counter 테스트
+    it('<App /> has Counter Router', () => {
+        expect(wrapper.find('Route[path="/counter"]').props().component).toEqual(Counter);
+    });
 });
+
